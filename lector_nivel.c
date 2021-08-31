@@ -9,8 +9,6 @@ int Sum(int a, int b)
     return a+b;
 }
 
-
-
 void leer_nivel_dim(char *rutaArchivo, int dim[2]) {
     if( ( archivo = fopen( rutaArchivo, "r" ) ) == NULL ) {
 		fprintf( stderr, "lector_nivel: Error leyendo el archivo %s\n", rutaArchivo );

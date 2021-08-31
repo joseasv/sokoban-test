@@ -36,7 +36,7 @@ int matrizAArreglo(int columnas, int i, int j) {
 bool moverCaja(int nX, int nY, struct Caja *caja, int *nivel, int dims[2]) {
     bool movExitoso = false;
     int indiceEspacio = matrizAArreglo(dims[0], nX, nY);
-    if (nivel[indiceEspacio] != -1) {
+    if (nivel[indiceEspacio] == 1) {
         int viejoIndiceCaja = matrizAArreglo(dims[0], caja->casillaX, caja->casillaY);
         nivel[viejoIndiceCaja] = 1;
         caja->casillaX = nX;
@@ -87,6 +87,8 @@ int main()
     Caja cajas[10];
     Sensor sensores[10];
 
+    bool juegoActivo = true;
+
     int cornerX = screenWidth / 2 - (dims[0]*tamCelda)/2;
     int cornerY = screenHeight / 2 - (dims[1]*tamCelda)/2;
 
@@ -135,103 +137,121 @@ int main()
     {
         // Update
         //----------------------------------------------------------------------------------
-        if (IsKeyPressed(KEY_RIGHT) && personaje.casillaX + 1 < dims[0]) {
-            int indice = matrizAArreglo(dims[0], personaje.casillaX + 1, personaje.casillaY);
-            int proxCasilla = nivel[indice];
-            if (proxCasilla != -1) {
+        if (juegoActivo) {
+            if (IsKeyPressed(KEY_RIGHT) && personaje.casillaX + 1 < dims[0]) {
+                int indice = matrizAArreglo(dims[0], personaje.casillaX + 1, personaje.casillaY);
+                int proxCasilla = nivel[indice];
+                if (proxCasilla != -1) {
 
-                if (proxCasilla == 2) {
-                    bool cajaMovida = false;
-                    for (int i = 0; i < numCajas; i++)
-                    {
-                        Caja *cajaDatos = &cajas[i];
-                        if (cajaDatos->casillaX == (personaje.casillaX + 1) && cajaDatos->casillaY == personaje.casillaY) {
-                            cajaMovida = moverCaja(cajaDatos->casillaX + 1, cajaDatos->casillaY, cajaDatos, nivel, dims);
-                            break;
+                    if (proxCasilla == 2) {
+                        bool cajaMovida = false;
+                        for (int i = 0; i < numCajas; i++)
+                        {
+                            Caja *cajaDatos = &cajas[i];
+                            if (cajaDatos->casillaX == (personaje.casillaX + 1) && cajaDatos->casillaY == personaje.casillaY) {
+                                cajaMovida = moverCaja(cajaDatos->casillaX + 1, cajaDatos->casillaY, cajaDatos, nivel, dims);
+                                break;
+                            }
                         }
-                    }
 
-                    if (cajaMovida) {
+                        if (cajaMovida) {
+                            personaje.casillaX = personaje.casillaX + 1;
+                        }
+                    } else {
                         personaje.casillaX = personaje.casillaX + 1;
                     }
-                } else {
-                    personaje.casillaX = personaje.casillaX + 1;
-                }
-            } 
-            
-        }
+                } 
+                
+            }
 
-        if (IsKeyPressed(KEY_LEFT) && personaje.casillaX - 1 >= 0) {
-            int indice = matrizAArreglo(dims[0], personaje.casillaX - 1, personaje.casillaY);
-            int proxCasilla = nivel[indice];
-            if (proxCasilla != -1) {
-                if (proxCasilla == 2) {
-                    bool cajaMovida = false;
-                    for (int i = 0; i < numCajas; i++)
-                    {
-                        Caja *cajaDatos = &cajas[i];
-                        if (cajaDatos->casillaX == (personaje.casillaX - 1) && cajaDatos->casillaY == personaje.casillaY) {
-                            cajaMovida = moverCaja(cajaDatos->casillaX - 1, cajaDatos->casillaY, cajaDatos, nivel, dims);
-                            break;
+            if (IsKeyPressed(KEY_LEFT) && personaje.casillaX - 1 >= 0) {
+                int indice = matrizAArreglo(dims[0], personaje.casillaX - 1, personaje.casillaY);
+                int proxCasilla = nivel[indice];
+                if (proxCasilla != -1) {
+                    if (proxCasilla == 2) {
+                        bool cajaMovida = false;
+                        for (int i = 0; i < numCajas; i++)
+                        {
+                            Caja *cajaDatos = &cajas[i];
+                            if (cajaDatos->casillaX == (personaje.casillaX - 1) && cajaDatos->casillaY == personaje.casillaY) {
+                                cajaMovida = moverCaja(cajaDatos->casillaX - 1, cajaDatos->casillaY, cajaDatos, nivel, dims);
+                                break;
+                            }
                         }
-                    }
 
-                    if (cajaMovida) {
+                        if (cajaMovida) {
+                            personaje.casillaX = personaje.casillaX - 1;
+                        }
+                    } else {
                         personaje.casillaX = personaje.casillaX - 1;
                     }
-                } else {
-                    personaje.casillaX = personaje.casillaX - 1;
                 }
-            }
-        } 
+            } 
 
-        if (IsKeyPressed(KEY_UP) && personaje.casillaY - 1 >= 0) {
-            int indice = matrizAArreglo(dims[0], personaje.casillaX, personaje.casillaY - 1);
-            int proxCasilla = nivel[indice];
-            if (proxCasilla != -1) {
-                if (proxCasilla == 2) {
-                    bool cajaMovida = false;
-                    for (int i = 0; i < numCajas; i++)
-                    {
-                        Caja *cajaDatos = &cajas[i];
-                        if (cajaDatos->casillaX == personaje.casillaX && cajaDatos->casillaY == (personaje.casillaY - 1)) {
-                            cajaMovida = moverCaja(cajaDatos->casillaX, (cajaDatos->casillaY - 1), cajaDatos, nivel, dims);
-                            break;
+            if (IsKeyPressed(KEY_UP) && personaje.casillaY - 1 >= 0) {
+                int indice = matrizAArreglo(dims[0], personaje.casillaX, personaje.casillaY - 1);
+                int proxCasilla = nivel[indice];
+                if (proxCasilla != -1) {
+                    if (proxCasilla == 2) {
+                        bool cajaMovida = false;
+                        for (int i = 0; i < numCajas; i++)
+                        {
+                            Caja *cajaDatos = &cajas[i];
+                            if (cajaDatos->casillaX == personaje.casillaX && cajaDatos->casillaY == (personaje.casillaY - 1)) {
+                                cajaMovida = moverCaja(cajaDatos->casillaX, (cajaDatos->casillaY - 1), cajaDatos, nivel, dims);
+                                break;
+                            }
                         }
-                    }
-                    if (cajaMovida) {
+                        if (cajaMovida) {
+                            personaje.casillaY = personaje.casillaY - 1;
+                        }
+                    } else {
                         personaje.casillaY = personaje.casillaY - 1;
                     }
-                } else {
-                    personaje.casillaY = personaje.casillaY - 1;
                 }
             }
-        }
-            
-        if (IsKeyPressed(KEY_DOWN) && personaje.casillaY + 1 < dims[1]) {
-            int indice = matrizAArreglo(dims[0], personaje.casillaX, personaje.casillaY + 1);
-            int proxCasilla = nivel[indice];
-            if (proxCasilla != -1) {
-                if (proxCasilla == 2) {
-                    bool cajaMovida = false;
-                    for (int i = 0; i < numCajas; i++)
-                    {
-                        Caja *cajaDatos = &cajas[i];
-                        if (cajaDatos->casillaX == personaje.casillaX && cajaDatos->casillaY == (personaje.casillaY + 1)) {
-                            cajaMovida = moverCaja(cajaDatos->casillaX, (cajaDatos->casillaY + 1), cajaDatos, nivel, dims);
-                            break;
+                
+            if (IsKeyPressed(KEY_DOWN) && personaje.casillaY + 1 < dims[1]) {
+                int indice = matrizAArreglo(dims[0], personaje.casillaX, personaje.casillaY + 1);
+                int proxCasilla = nivel[indice];
+                if (proxCasilla != -1) {
+                    if (proxCasilla == 2) {
+                        bool cajaMovida = false;
+                        for (int i = 0; i < numCajas; i++)
+                        {
+                            Caja *cajaDatos = &cajas[i];
+                            if (cajaDatos->casillaX == personaje.casillaX && cajaDatos->casillaY == (personaje.casillaY + 1)) {
+                                cajaMovida = moverCaja(cajaDatos->casillaX, (cajaDatos->casillaY + 1), cajaDatos, nivel, dims);
+                                break;
+                            }
                         }
-                    }
-                    if (cajaMovida) {
+                        if (cajaMovida) {
+                            personaje.casillaY = personaje.casillaY + 1;
+                        }
+                    } else {
                         personaje.casillaY = personaje.casillaY + 1;
                     }
-                } else {
-                    personaje.casillaY = personaje.casillaY + 1;
+                    
                 }
-                
+            }
+            
+            int sensoresChequeados = 0;
+            for (int i = 0; i < numSensores; i++)
+            {
+                Sensor sensorDatos = sensores[i];
+                int indice = matrizAArreglo(dims[0], sensorDatos.casillaX, sensorDatos.casillaY);
+
+                if (nivel[indice] == 2) {
+                    sensoresChequeados++;
+                }
+            }
+            
+            if (sensoresChequeados == numSensores) {
+                juegoActivo = false;
             }
         }
         
+
         //----------------------------------------------------------------------------------
 
         // Draw
@@ -255,18 +275,17 @@ int main()
                 }
             }
 
-            for (int i = 0; i < numCajas; i++)
-            {
-                Caja cajaDatos = cajas[i];
-                DrawTexture(cajaDatos.textura, cornerX + tamCelda*cajaDatos.casillaX, cornerY + tamCelda*cajaDatos.casillaY, WHITE);
-            }
-
             for (int i = 0; i < numSensores; i++)
             {
                 Sensor sensorDatos = sensores[i];
                 DrawTexture(sensorDatos.textura, sensorDatos.posicion.x, sensorDatos.posicion.y, WHITE);
             }
             
+            for (int i = 0; i < numCajas; i++)
+            {
+                Caja cajaDatos = cajas[i];
+                DrawTexture(cajaDatos.textura, cornerX + tamCelda*cajaDatos.casillaX, cornerY + tamCelda*cajaDatos.casillaY, WHITE);
+            }
 
             DrawTexture(personaje.textura, cornerX + tamCelda*personaje.casillaX, cornerY + tamCelda*personaje.casillaY, WHITE);
 
